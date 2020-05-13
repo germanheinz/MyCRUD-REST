@@ -85,6 +85,7 @@ class _ProductPageState extends State<ProductPage> {
       }
     );
   }
+ 
   Widget _createStock(){
 
     //Creamos el switch

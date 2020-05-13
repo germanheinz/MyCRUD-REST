@@ -6,7 +6,7 @@ ProducModel producModelFromJson(String str) => ProducModel.fromJson(json.decode(
 String producModelToJson(ProducModel data) => json.encode(data.toJson());
 
 class ProducModel {
-    int id;
+    String id;
     String title;
     double value;
     bool stock;

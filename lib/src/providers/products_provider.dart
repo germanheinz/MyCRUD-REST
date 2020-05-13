@@ -8,6 +8,7 @@ class ProductProvider {
 
   final String _url = 'https://flutter-db-9837c.firebaseio.com';
 
+  //CREATE NEW PRODUCT
   Future<bool> createProduct(ProducModel product) async {
     final url = '$_url/products.json';
     
@@ -17,5 +18,26 @@ class ProductProvider {
     
     print(decodedData);
     return true;
+  }
+
+  //GET ALL PRODUCTS
+  Future<List<ProducModel>> getProducts() async {
+    final List<ProducModel> products = new List();
+    
+    final url = '$_url/products.json';
+    
+    final resp = await http.get(url);
+    
+    final Map<String, dynamic> decodedData = json.decode(resp.body);
+    
+    decodedData.forEach((id, prod){
+      
+      final productsTemp = ProducModel.fromJson(prod); 
+      productsTemp.id = id;
+      products.add(productsTemp);
+    });
+
+    print(products);
+    return products;
   }
 }
