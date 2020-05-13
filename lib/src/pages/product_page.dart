@@ -128,7 +128,7 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-  void _submit(){
+  void _submit() async {
 
     if(!formKey.currentState.validate()) return;
 
@@ -136,6 +136,10 @@ class _ProductPageState extends State<ProductPage> {
     formKey.currentState.save();
 
     setState(() { _saving = true; });
+
+    if(photo != null){
+      product.photoUrl = await productProvider.uploadImage(photo);
+    }
     
     print('OK');
     print('title: ${product.title}');
@@ -162,18 +166,6 @@ class _ProductPageState extends State<ProductPage> {
     scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
-  _selectPhoto() async {
-    photo = await ImagePicker.pickImage(source:ImageSource.gallery);
-
-    if(photo != null){
-      //TODO celan
-    setState(() {
-      photo = photo;
-    });
-    }
-
-
-  }
   Widget _showImage(){
     if(product.photoUrl != null){
       return Container();
@@ -186,8 +178,26 @@ class _ProductPageState extends State<ProductPage> {
     }
   }
 
-  _takePicture(){
-
+  _selectPhoto() async {
+    _imageProccesor(ImageSource.gallery);
   }
 
+  _takePicture() async {
+   _imageProccesor(ImageSource.camera);
+  }
+
+  _imageProccesor(ImageSource origin) async {
+    photo = await ImagePicker.pickImage(
+      source: origin
+    );
+
+    if(photo != null){
+      //TODO celan
+    setState(() {
+      photo = photo;
+    });
+    }
+  }
+
+ 
 }

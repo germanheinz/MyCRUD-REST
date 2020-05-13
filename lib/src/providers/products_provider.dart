@@ -1,8 +1,11 @@
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:formvalidation/src/models/product.dart';
 import 'package:http/http.dart' as http;
+import 'package:mime_type/mime_type.dart';
+import 'package:http_parser/http_parser.dart';
 
 class ProductProvider {
 
@@ -63,5 +66,39 @@ class ProductProvider {
 
     return true;
   } 
+
+  Future<String> uploadImage(File image) async {
+    
+    final url = Uri.parse('https://api.cloudinary.com/v1_1/cloudinarygh/image/upload?upload_preset=lj7cpwrc');
+
+    //Como saber el mime type de la imagen
+    // https://pub.dev/packages/mime_type#-readme-tab-
+    final mimeType = mime(image.path).split('/');
+    final imageUploadRequest = http.MultipartRequest(
+      'POST',
+      url
+    );
+
+    final file = await http.MultipartFile.fromPath(
+      'file', 
+      image.path, 
+      contentType: MediaType(mimeType[0], mimeType[1])
+    );
+
+    imageUploadRequest.files.add(file);
+    final streamResponse = await imageUploadRequest.send();
+    final resp = await http.Response.fromStream(streamResponse);
+
+    if(resp.statusCode != 200 && resp.statusCode != 201){
+      print('Algo salio mal');
+      print(resp.body);
+      return null;
+    }
+
+    final responseData = json.decode(resp.body);
+    print(responseData);
+    return responseData['secure_url'];
+
+  }
 
 }
