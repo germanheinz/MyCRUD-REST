@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:formvalidation/src/models/product.dart';
 import 'package:formvalidation/src/utils/utils.dart' as utils;
 
 class ProductPage extends StatefulWidget {
@@ -9,6 +10,8 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   final formKey = GlobalKey<FormState>();
+
+  ProducModel product = new ProducModel();
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +36,7 @@ class _ProductPageState extends State<ProductPage> {
             child: Column(children: <Widget>[
               _createName(),
               _createPrice(),
+              _createStock(),
               SizedBox(height: 20.0, width: 20.0),
               _createButton(),
             ],
@@ -45,10 +49,12 @@ class _ProductPageState extends State<ProductPage> {
 
   Widget _createName(){
     return TextFormField(
+      initialValue: product.title,
       textCapitalization: TextCapitalization.sentences,
       decoration: InputDecoration(
         labelText: 'Product'
       ),
+      onSaved: (value) => product.title = value,
       validator: (value){
         if(value.length<3){
           return 'Ingrese el nombre del producto';
@@ -61,10 +67,12 @@ class _ProductPageState extends State<ProductPage> {
 
   Widget _createPrice(){
   return TextFormField(
+    initialValue: product.value.toString(),
       keyboardType: TextInputType.numberWithOptions(decimal: true),
       decoration: InputDecoration(
         labelText: 'Price'
       ),
+      onSaved: (value) => product.value = double.parse(value),
       validator: (value) {
         if(utils.isNumeric(value)){
           return null;
@@ -73,6 +81,19 @@ class _ProductPageState extends State<ProductPage> {
         }
       }
     );
+  }
+  Widget _createStock(){
+
+    //Creamos el switch
+    return SwitchListTile(
+      value: product.stock,
+      title: Text('In Stock'),
+      activeColor: Colors.deepPurple,
+      onChanged: (value) => setState((){
+        product.stock = value;
+        print(product.stock);
+        }), 
+      );
   }
 
   Widget _createButton(){
@@ -90,7 +111,15 @@ class _ProductPageState extends State<ProductPage> {
 
     if(!formKey.currentState.validate()) return;
 
+    //Dispara el save de todos los textfields que esten en el form
+    formKey.currentState.save();
+
     print('OK');
+    print('title: ${product.title}');
+    print('value: ${product.value}');
+    print('value: ${product.stock}');
     
   }
+
+
 }
