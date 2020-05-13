@@ -10,15 +10,26 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  final formKey = GlobalKey<FormState>();
+  final formKey     = GlobalKey<FormState>();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
 
   ProducModel product = new ProducModel();
 
   final productProvider = new ProductProvider();
 
+  bool _saving = false;
+
   @override
   Widget build(BuildContext context) {
+
+    // Recibo los argumentos de homePage para update de producto y valido si vino o no  
+    final ProducModel productFromHome = ModalRoute.of(context).settings.arguments;
+    if(productFromHome != null){
+      product = productFromHome;
+    }
+
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         actions: <Widget>[
           IconButton(
@@ -107,7 +118,7 @@ class _ProductPageState extends State<ProductPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       color: Colors.deepPurple,
       textColor: Colors.white,
-      onPressed: _submit,
+      onPressed: (_saving) ? null : _submit,
     );
   }
 
@@ -118,14 +129,31 @@ class _ProductPageState extends State<ProductPage> {
     //Dispara el save de todos los textfields que esten en el form
     formKey.currentState.save();
 
+    setState(() { _saving = true; });
+    
     print('OK');
     print('title: ${product.title}');
     print('value: ${product.value}');
     print('value: ${product.stock}');
-    productProvider.createProduct(product);
-    
+
+    if(product.id == null){
+      productProvider.createProduct(product);
+    }else{
+      productProvider.updateProduct(product);
+    }
+    setState(() { _saving = false; });
+    showSnackBar('Saved!');
+    Navigator.pop(context);
     
   }
 
+  void showSnackBar(String message){
+    final snackBar = SnackBar(
+      content : Text(message),
+      duration: Duration(milliseconds: 1500),
+    );
+
+    scaffoldKey.currentState.showSnackBar(snackBar);
+  }
 
 }

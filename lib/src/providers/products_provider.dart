@@ -8,17 +8,6 @@ class ProductProvider {
 
   final String _url = 'https://flutter-db-9837c.firebaseio.com';
 
-  //CREATE NEW PRODUCT
-  Future<bool> createProduct(ProducModel product) async {
-    final url = '$_url/products.json';
-    
-    final resp = await http.post(url, body: producModelToJson(product));
-    
-    final decodedData = json.decode(resp.body);
-    
-    print(decodedData);
-    return true;
-  }
 
   //GET ALL PRODUCTS
   Future<List<ProducModel>> getProducts() async {
@@ -40,7 +29,32 @@ class ProductProvider {
     print(products);
     return products;
   }
+  
+  //CREATE NEW PRODUCT
+  Future<bool> createProduct(ProducModel product) async {
+    final url = '$_url/products.json';
+    
+    final resp = await http.post(url, body: producModelToJson(product));
+    
+    final decodedData = json.decode(resp.body);
+    
+    print(decodedData);
+    return true;
+  }
 
+  //UPDATE NEW PRODUCT
+  Future<bool> updateProduct(ProducModel product) async {
+    final url  = '$_url/products/${product.id}.json';
+    
+    final resp = await http.put(url, body: producModelToJson(product));
+    
+    final decodedData = json.decode(resp.body);
+    
+    print(decodedData);
+    return true;
+  }
+
+  //DELETE PRODUCT
   Future<bool> deleteProduct(String id) async {
 
     final url  = '$_url/products/$id.json';

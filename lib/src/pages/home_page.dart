@@ -20,12 +20,14 @@ class HomePage extends StatelessWidget {
       floatingActionButton: _createButton(context),
     );
   }
+  
   _createButton(BuildContext context){
     return FloatingActionButton(
       child: Icon(Icons.add),
       onPressed: ()=>Navigator.pushNamed(context, 'product'),
     );
   }
+  
   Widget _getListProducts(){
     return FutureBuilder(
       future: productProvider.getProducts(),
@@ -59,7 +61,7 @@ class HomePage extends StatelessWidget {
         child: ListTile(
         title: Text('${product.title} - ${product.value}'),
         subtitle: Text(product.id),
-        onTap: () => Navigator.pushNamed(context, 'product'),
+        onTap: () => Navigator.pushNamed(context, 'product', arguments: product),
       ),
     );
   }
