@@ -168,7 +168,13 @@ class _ProductPageState extends State<ProductPage> {
 
   Widget _showImage(){
     if(product.photoUrl != null){
-      return Container();
+      return FadeInImage(
+        image: NetworkImage(product.photoUrl),
+        placeholder: AssetImage('assets/loading.gif'),
+        height: 300.0,
+        width: double.infinity,
+        fit: BoxFit.cover
+      );
     }else{
       return Image(
         image: AssetImage(photo?.path ?? 'assets/no-image.png'),
@@ -192,7 +198,7 @@ class _ProductPageState extends State<ProductPage> {
     );
 
     if(photo != null){
-      //TODO celan
+      product.photoUrl = null;
     setState(() {
       photo = photo;
     });
