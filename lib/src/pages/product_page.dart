@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:formvalidation/src/models/product.dart';
 import 'package:formvalidation/src/providers/products_provider.dart';
 import 'package:formvalidation/src/utils/utils.dart' as utils;
+import 'package:image_picker/image_picker.dart';
 
 class ProductPage extends StatefulWidget {
   
@@ -19,6 +22,8 @@ class _ProductPageState extends State<ProductPage> {
 
   bool _saving = false;
 
+  File photo;
+
   @override
   Widget build(BuildContext context) {
 
@@ -34,11 +39,11 @@ class _ProductPageState extends State<ProductPage> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.photo_size_select_actual),
-            onPressed: (){},
+            onPressed: _selectPhoto,
             ),
             IconButton(
             icon: Icon(Icons.camera_alt),
-            onPressed: (){},
+            onPressed: _takePicture,
             ),
         ],
       ),
@@ -48,6 +53,7 @@ class _ProductPageState extends State<ProductPage> {
           child: Form(
             key: formKey,
             child: Column(children: <Widget>[
+              _showImage(),
               _createName(),
               _createPrice(),
               _createStock(),
@@ -154,6 +160,34 @@ class _ProductPageState extends State<ProductPage> {
     );
 
     scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+  _selectPhoto() async {
+    photo = await ImagePicker.pickImage(source:ImageSource.gallery);
+
+    if(photo != null){
+      //TODO celan
+    setState(() {
+      photo = photo;
+    });
+    }
+
+
+  }
+  Widget _showImage(){
+    if(product.photoUrl != null){
+      return Container();
+    }else{
+      return Image(
+        image: AssetImage(photo?.path ?? 'assets/no-image.png'),
+        height: 300.0,
+        fit: BoxFit.cover,
+      );
+    }
+  }
+
+  _takePicture(){
+
   }
 
 }
