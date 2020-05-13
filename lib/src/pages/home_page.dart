@@ -31,11 +31,35 @@ class HomePage extends StatelessWidget {
       future: productProvider.getProducts(),
       builder: (BuildContext context, AsyncSnapshot<List<ProducModel>> snapshot) {
         if(snapshot.hasData){
-          return Container();
+          // Creo variable para que sea mas visible
+          final products = snapshot.data;
+          
+          return ListView.builder(
+            itemCount: products.length,
+            itemBuilder:(context, i) => _createItem(context, products[i])
+          );
         } else {
           return Center(child: CircularProgressIndicator());
         }
       },
+    );
+  }
+  
+  Widget _createItem(BuildContext context, ProducModel product){
+    //Envuelvo el ListTile en un Dismissible y genero un key unico
+    return Dismissible(
+        key: UniqueKey(),
+        background: Container(
+          color: Colors.red,
+        ),
+        onDismissed: (directions){
+          //DELETE ITEM
+        },
+        child: ListTile(
+        title: Text('${product.title} - ${product.value}'),
+        subtitle: Text(product.id),
+        onTap: () => Navigator.pushNamed(context, 'product'),
+      ),
     );
   }
 }
