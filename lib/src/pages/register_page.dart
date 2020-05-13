@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:formvalidation/src/bloc/provider.dart';
 import 'package:formvalidation/src/providers/user_provider.dart';
+import 'package:formvalidation/src/utils/utils.dart';
 
 class RegisterPage extends StatelessWidget {
   
@@ -159,8 +160,16 @@ class RegisterPage extends StatelessWidget {
     );
   }
 
-  _register(LoginBloc bloc, BuildContext context) {
+  _register(LoginBloc bloc, BuildContext context) async {
     userProvider.createUser(bloc.email, bloc.password);
+    
+    Map info = await userProvider.login(bloc.email, bloc.password);
+
+    if(info['ok']){
+      Navigator.pushReplacementNamed(context, 'home');
+    }else{
+      showAlert(context, info['mensaje']);
+    }
   }
 
 
