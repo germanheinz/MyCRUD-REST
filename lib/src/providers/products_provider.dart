@@ -40,4 +40,14 @@ class ProductProvider {
     print(products);
     return products;
   }
+
+  Future<bool> deleteProduct(String id) async {
+
+    final url  = '$_url/products/$id.json';
+    final resp = await http.delete(url);
+    print(json.decode(resp.body));
+
+    return true;
+  } 
+
 }

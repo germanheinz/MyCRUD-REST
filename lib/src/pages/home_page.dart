@@ -54,6 +54,7 @@ class HomePage extends StatelessWidget {
         ),
         onDismissed: (directions){
           //DELETE ITEM
+          productProvider.deleteProduct(product.id);
         },
         child: ListTile(
         title: Text('${product.title} - ${product.value}'),
