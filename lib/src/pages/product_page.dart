@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:formvalidation/src/utils/utils.dart' as utils;
 
-class ProductPage extends StatelessWidget {
-  const ProductPage({Key key}) : super(key: key);
+class ProductPage extends StatefulWidget {
+  
+  @override
+  _ProductPageState createState() => _ProductPageState();
+}
+
+class _ProductPageState extends State<ProductPage> {
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +29,7 @@ class ProductPage extends StatelessWidget {
         padding: EdgeInsets.all(15.0),
         child: Container(
           child: Form(
+            key: formKey,
             child: Column(children: <Widget>[
               _createName(),
               _createPrice(),
@@ -34,12 +42,20 @@ class ProductPage extends StatelessWidget {
       ),
     );
   }
+
   Widget _createName(){
     return TextFormField(
       textCapitalization: TextCapitalization.sentences,
       decoration: InputDecoration(
         labelText: 'Product'
       ),
+      validator: (value){
+        if(value.length<3){
+          return 'Ingrese el nombre del producto';
+        }else{
+          return null;
+        }
+      },
     );
   }
 
@@ -49,8 +65,16 @@ class ProductPage extends StatelessWidget {
       decoration: InputDecoration(
         labelText: 'Price'
       ),
+      validator: (value) {
+        if(utils.isNumeric(value)){
+          return null;
+        }else{
+          return 'Solo numeros';
+        }
+      }
     );
   }
+
   Widget _createButton(){
     return RaisedButton.icon(
       label: Text('Save'),
@@ -58,7 +82,15 @@ class ProductPage extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       color: Colors.deepPurple,
       textColor: Colors.white,
-      onPressed: (){},
+      onPressed: _submit,
     );
+  }
+
+  void _submit(){
+
+    if(!formKey.currentState.validate()) return;
+
+    print('OK');
+    
   }
 }
