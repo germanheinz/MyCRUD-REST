@@ -67,7 +67,7 @@ class ProductProvider {
     return true;
   } 
 
-  //UPLOAD FILE
+  //UPLOAD FILE -- https://pub.dev/packages/image_picker#-readme-tab-  & mime type
   Future<String> uploadImage(File image) async {
     
     final url = Uri.parse('https://api.cloudinary.com/v1_1/cloudinarygh/image/upload?upload_preset=lj7cpwrc');
