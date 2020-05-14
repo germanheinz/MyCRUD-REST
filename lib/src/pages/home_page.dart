@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:formvalidation/src/bloc/provider.dart';
 import 'package:formvalidation/src/models/product.dart';
-import 'package:formvalidation/src/providers/products_provider.dart';
-
 class HomePage extends StatelessWidget {
-
-  final productProvider = new ProductProvider();
 
   @override
   Widget build(BuildContext context) {
 
-    final bloc = Provider.of(context);
-
+    final productsBloc = Provider.productBloc(context);
+    productsBloc.getProducts();
+    
     return Scaffold(
       appBar: AppBar(
         title: Text('Home')
       ),
-      body: _getListProducts(),
+      body: _getListProducts(productsBloc),
       floatingActionButton: _createButton(context),
     );
   }
@@ -28,17 +25,17 @@ class HomePage extends StatelessWidget {
     );
   }
   
-  Widget _getListProducts(){
-    return FutureBuilder(
-      future: productProvider.getProducts(),
-      builder: (BuildContext context, AsyncSnapshot<List<ProducModel>> snapshot) {
-        if(snapshot.hasData){
-          // Creo variable para que sea mas visible
+  Widget _getListProducts(ProductBloc productBloc){
+    return StreamBuilder(
+      stream: productBloc.productsStream, 
+      builder: (BuildContext context, AsyncSnapshot<List<ProducModel>> snapshot){
+         if(snapshot.hasData){
+      // Creo variable para que sea mas visible 
           final products = snapshot.data;
           
           return ListView.builder(
             itemCount: products.length,
-            itemBuilder:(context, i) => _createItem(context, products[i])
+            itemBuilder:(context, i) => _createItem(context,productBloc, products[i])
           );
         } else {
           return Center(child: CircularProgressIndicator());
@@ -47,7 +44,7 @@ class HomePage extends StatelessWidget {
     );
   }
   
-  Widget _createItem(BuildContext context, ProducModel product){
+  Widget _createItem(BuildContext context,ProductBloc productBloc, ProducModel product){
     //Envuelvo el ListTile en un Dismissible y genero un key unico
     return Dismissible(
         key: UniqueKey(),
@@ -56,7 +53,7 @@ class HomePage extends StatelessWidget {
         ),
         onDismissed: (directions){
           //DELETE ITEM
-          productProvider.deleteProduct(product.id);
+          productBloc.deleteProducts(product.id);
         },
         child: Card(
           child: Column(

@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:formvalidation/src/bloc/product_bloc.dart';
+import 'package:formvalidation/src/bloc/provider.dart';
 import 'package:formvalidation/src/models/product.dart';
-import 'package:formvalidation/src/providers/products_provider.dart';
 import 'package:formvalidation/src/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
 
@@ -15,10 +16,11 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   final formKey     = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  ProductBloc productBloc;
 
   ProducModel product = new ProducModel();
 
-  final productProvider = new ProductProvider();
+  // final productProvider = new ProductProvider(); // Cambiado por bloc
 
   bool _saving = false;
 
@@ -26,7 +28,7 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
-
+    productBloc =  Provider.productBloc(context);
     // Recibo los argumentos de homePage para update de producto y valido si vino o no  
     final ProducModel productFromHome = ModalRoute.of(context).settings.arguments;
     if(productFromHome != null){
@@ -138,7 +140,7 @@ class _ProductPageState extends State<ProductPage> {
     setState(() { _saving = true; });
 
     if(photo != null){
-      product.photoUrl = await productProvider.uploadImage(photo);
+      product.photoUrl = await productBloc.uploadFile(photo);
     }
     
     print('OK');
@@ -147,9 +149,9 @@ class _ProductPageState extends State<ProductPage> {
     print('value: ${product.stock}');
 
     if(product.id == null){
-      productProvider.createProduct(product);
+      productBloc.saveProducts(product);
     }else{
-      productProvider.updateProduct(product);
+      productBloc.updateProducts(product);
     }
     setState(() { _saving = false; });
     showSnackBar('Saved!');

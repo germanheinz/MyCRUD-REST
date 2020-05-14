@@ -163,7 +163,7 @@ class RegisterPage extends StatelessWidget {
   _register(LoginBloc bloc, BuildContext context) async {
     userProvider.createUser(bloc.email, bloc.password);
     
-    Map info = await userProvider.login(bloc.email, bloc.password);
+    Map info = await userProvider.createUser(bloc.email, bloc.password);
 
     if(info['ok']){
       Navigator.pushReplacementNamed(context, 'home');
